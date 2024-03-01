@@ -8,10 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install git
-RUN apt-get update && \
-    apt-get install -y git && \
-    git config --global user.email "nic@google.com" && \
-    git config --global user.name "GoogleExtensionUnpacker"
+RUN apt-get update && apt-get install -y git
 
 # Install pip requirements
 COPY requirements.txt .

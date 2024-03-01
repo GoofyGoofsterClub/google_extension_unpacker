@@ -114,14 +114,13 @@ def create_tree(repo_owner, repo_name, github_token, path, commit_message, branc
     for root, dirs, files in os.walk(path):
         for file in files:
             file_path = os.path.join(root, file)
-            with open(file_path, 'rb') as f:  # Open in binary mode
+            with open(file_path, 'r', encoding='utf-8') as f:  # Open in text mode
                 content = f.read()
-            content_encoded = base64.b64encode(content).decode('utf-8')  # Base64 encode
             tree.append({
                 "path": file_path.replace(path, "").lstrip("/"),
                 "mode": "100644",
                 "type": "blob",
-                "content": content_encoded
+                "content": content
             })
 
     # Create a new tree on GitHub
@@ -146,12 +145,24 @@ def create_tree(repo_owner, repo_name, github_token, path, commit_message, branc
         )
         if commit_response.status_code == 201:
             commit_sha = commit_response.json()["sha"]
-            # Attempt to merge and push the changes
-            merge_and_push(github_token, repo_owner, repo_name, branch_name, commit_sha)
+            # Update the reference (e.g., master branch)
+            ref_url = f"{base_url}/git/refs/heads/{branch_name}"
+            ref_payload = {
+                "sha": commit_sha
+            }
+            ref_response = requests.patch(
+                ref_url,
+                headers={"Authorization": f"token {github_token}"},
+                json=ref_payload
+            )
+            if ref_response.status_code == 200:
+                print("Directory pushed successfully!")
+            else:
+                print(f"Failed to update reference: {ref_response.status_code}")
         else:
-            print_response_error(commit_response)
+            print(f"Failed to create commit: {commit_response.status_code}")
     else:
-        print_response_error(response)
+        print(f"Failed to create tree: {response.status_code}")
 
 while True:
     download_crx(os.environ['EXTENSION_ID'], "downloaded_extension.crx")

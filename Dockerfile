@@ -9,6 +9,8 @@ ENV PYTHONUNBUFFERED=1
 
 # Install git
 RUN apt-get update && apt-get install -y git
+RUN git config --global user.name Google
+RUN git config --global user.email admin@google.com
 
 # Install pip requirements
 COPY requirements.txt .

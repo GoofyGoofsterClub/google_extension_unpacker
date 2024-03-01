@@ -9,7 +9,7 @@ import git
 
 def build_commit_message(message):
     now = datetime.now()
-    return f'[{now.strftime("%d/%m/%Y, %H:%M:%S")}] {message}'
+    return f'[{now.strftime("%d/%m/%Y, %H:%M:%S")}] {message}\n\n\non-behalf-of: @{os.environ["REPO_OWNER"]}'
 
 def download_crx(extension_id, output_path):
     api_url = f"https://clients2.google.com/service/update2/crx?response=redirect&prodversion=49.0&acceptformat=crx3&x=id%3D{extension_id}%26installsource%3Dondemand%26uc"
@@ -39,6 +39,10 @@ while True:
         print("Removed unintentional junk")
 
     repo_local = git.Repo.clone_from(f'https://NekoPavel:{os.environ["GITHUB_TOKEN"]}@github.com/{os.environ["REPO_OWNER"]}/{os.environ["REPO_NAME"]}.git', 'extension_unpacked')
+
+    repo_local.git.config('user.name', 'GoogleThing')
+    repo_local.git.config('user.email', 'thing@google.com')
+
 
     with zipfile.ZipFile("downloaded_extension.crx","r") as zip_ref:
         zip_ref.extractall("extension_unpacked")

@@ -9,7 +9,7 @@ import git
 
 def build_commit_message(message):
     now = datetime.now()
-    return f'[{now.strftime("%d/%m/%Y, %H:%M:%S")}] {message}\n\n\non-behalf-of: @{os.environ["REPO_OWNER"]}'
+    return f'[{now.strftime("%d/%m/%Y, %H:%M:%S")}] {message}\n\n\non-behalf-of: @{os.environ["GIT_USERNAME"]} <{os.environ["GIT_EMAIL"]}>\nCo-authored-by: {os.environ["GIT_USERNAME"]} <{os.environ["GIT_EMAIL"]}>'
 
 def download_crx(extension_id, output_path):
     api_url = f"https://clients2.google.com/service/update2/crx?response=redirect&prodversion=49.0&acceptformat=crx3&x=id%3D{extension_id}%26installsource%3Dondemand%26uc"
@@ -40,7 +40,7 @@ while True:
 
     repo_local = git.Repo.clone_from(f'https://NekoPavel:{os.environ["GITHUB_TOKEN"]}@github.com/{os.environ["REPO_OWNER"]}/{os.environ["REPO_NAME"]}.git', 'extension_unpacked')
 
-    repo_local.git.config('user.name', 'GoogleThing')
+    repo_local.git.config('user.name', 'Google Extension Extractor')
     repo_local.git.config('user.email', 'thing@google.com')
 
 
